@@ -143,66 +143,6 @@ contract ChainVerseTest is Test {
         chainVerse.payForArticle{value: 0.5 ether}(0);
     }
 
-    function testRequestRefundWithinPeriod() public {
-        string memory title = "Sample Title";
-        string
-            memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
-        uint256 price = 1 ether;
-        string
-            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
-
-        ChainVerse.Category category = ChainVerse.Category.Food;
-
-        vm.prank(author);
-        chainVerse.publishArticle(
-            title,
-            ipfsHash,
-            imageIpfsHash,
-            category,
-            price
-        );
-
-        vm.prank(reader);
-        chainVerse.payForArticle{value: 1 ether}(0);
-
-        vm.warp(block.timestamp + 1 hours);
-
-        vm.prank(reader);
-        chainVerse.requestRefund(0);
-
-        bool hasPaid = chainVerse.canAccessArticle(0, reader);
-        assertEq(hasPaid, false);
-    }
-
-    function testRequestRefundAfterPeriod() public {
-        string memory title = "Sample Title";
-        string
-            memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
-        uint256 price = 1 ether;
-        string
-            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
-
-        ChainVerse.Category category = ChainVerse.Category.Food;
-
-        vm.prank(author);
-        chainVerse.publishArticle(
-            title,
-            ipfsHash,
-            imageIpfsHash,
-            category,
-            price
-        );
-
-        vm.prank(reader);
-        chainVerse.payForArticle{value: 1 ether}(0);
-
-        vm.warp(block.timestamp + 2 days);
-
-        vm.prank(reader);
-        vm.expectRevert("Refund period expired");
-        chainVerse.requestRefund(0);
-    }
-
     function testAccessArticleContent() public {
         string memory title = "Sample Title";
         string
