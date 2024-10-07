@@ -43,20 +43,11 @@ contract ChainVerse is ReentrancyGuard {
     // Mapping to track which users have paid for which articles
     mapping(uint256 => mapping(address => bool)) public hasPaid;
 
-    // Record payment timestamps
-    mapping(uint256 => mapping(address => uint256)) public paymentTimestamps;
-
     // Track accumulated platform fees
     uint256 public accumulatedPlatformFees;
 
     // Track accumulated earnings for each author
     mapping(address => uint256) public authorEarnings;
-
-    // Track if a user has accessed the article content
-    mapping(uint256 => mapping(address => bool)) public hasAccessedContent;
-
-    // Mapping to track the amount each user has paid for each article
-    mapping(uint256 => mapping(address => uint256)) public paidAmount;
 
     // Event for new article
     event NewArticle(
@@ -149,12 +140,6 @@ contract ChainVerse is ReentrancyGuard {
         // Mark the user as having paid for the article
         hasPaid[articleId][msg.sender] = true;
 
-        // Update the payment timestamp
-        paymentTimestamps[articleId][msg.sender] = block.timestamp;
-
-        // Record the amount paid by the user
-        paidAmount[articleId][msg.sender] = msg.value;
-
         // Log successful payment
         emit PaymentProcessed(
             articleId,
@@ -206,37 +191,6 @@ contract ChainVerse is ReentrancyGuard {
         require(success, "Withdrawal failed");
     }
 
-    // Allow refund if user hasn't accessed the article and within the refund period
-    function requestRefund(uint256 articleId) public nonReentrant {
-        require(articleId < nextArticleId, "Article does not exist");
-        require(
-            hasPaid[articleId][msg.sender],
-            "You have not paid for this article"
-        );
-        require(
-            block.timestamp <=
-                paymentTimestamps[articleId][msg.sender] + refundPeriod,
-            "Refund period expired"
-        );
-        require(
-            !hasAccessedContent[articleId][msg.sender],
-            "You have already accessed the article content"
-        );
-
-        // Use the actual amount the user paid for the refund
-        uint256 amountPaid = paidAmount[articleId][msg.sender];
-
-        // Mark as not paid and reset payment timestamp before transferring funds
-        hasPaid[articleId][msg.sender] = false;
-        paymentTimestamps[articleId][msg.sender] = 0;
-
-        // Refund the full amount to the user
-        (bool success, ) = payable(msg.sender).call{value: amountPaid}("");
-        require(success, "Refund transfer failed");
-
-        emit RefundIssued(articleId, msg.sender, amountPaid);
-    }
-
     // Check if a user can access an article
     function canAccessArticle(
         uint256 articleId,
@@ -281,7 +235,7 @@ contract ChainVerse is ReentrancyGuard {
     // Get the IPFS hash of an article (only accessible if the user has paid)
     function getArticleContent(
         uint256 articleId
-    ) public returns (string memory ipfsHash) {
+    ) public view returns (string memory ipfsHash) {
         require(articleId < nextArticleId, "Article does not exist");
         Article memory article = articles[articleId];
 
@@ -295,9 +249,6 @@ contract ChainVerse is ReentrancyGuard {
             hasPaid[articleId][msg.sender],
             "You need to pay to access this article"
         );
-
-        // Mark the user as having accessed the content
-        hasAccessedContent[articleId][msg.sender] = true;
 
         return article.ipfsHash;
     }
