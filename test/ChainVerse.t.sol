@@ -28,12 +28,28 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
 
+        ChainVerse.Category category = ChainVerse.Category.Food;
         vm.prank(author);
-        chainVerse.publishArticle(title, ipfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
 
-        (string memory returnedTitle, , , uint256 returnedPrice, ) = chainVerse
-            .getArticleDetails(0);
+        (
+            string memory returnedTitle,
+            ,
+            ,
+            ,
+            ,
+            uint256 returnedPrice,
+
+        ) = chainVerse.getArticleDetails(0);
         assertEq(returnedTitle, title);
         assertEq(returnedPrice, price);
     }
@@ -44,18 +60,38 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
 
         vm.prank(author);
-        chainVerse.publishArticle(longTitle, ipfsHash, price);
+        chainVerse.publishArticle(
+            longTitle,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
     }
 
     function testFailPublishArticleWithInvalidIPFSHash() public {
         string memory title = "Valid Title";
         string memory invalidIpfsHash = "QmInvalidHash";
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
         uint256 price = 1 ether;
 
         vm.prank(author);
-        chainVerse.publishArticle(title, invalidIpfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            invalidIpfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
     }
 
     function testPayForArticle() public {
@@ -63,9 +99,19 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
 
         vm.prank(author);
-        chainVerse.publishArticle(title, ipfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
 
         vm.prank(reader);
         chainVerse.payForArticle{value: 1 ether}(0);
@@ -79,9 +125,19 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
 
         vm.prank(author);
-        chainVerse.publishArticle(title, ipfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
 
         vm.prank(reader);
         chainVerse.payForArticle{value: 0.5 ether}(0);
@@ -92,9 +148,19 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
 
         vm.prank(author);
-        chainVerse.publishArticle(title, ipfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
 
         vm.prank(reader);
         chainVerse.payForArticle{value: 1 ether}(0);
@@ -113,9 +179,19 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
 
         vm.prank(author);
-        chainVerse.publishArticle(title, ipfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
 
         vm.prank(reader);
         chainVerse.payForArticle{value: 1 ether}(0);
@@ -132,9 +208,19 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
 
         vm.prank(author);
-        chainVerse.publishArticle(title, ipfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
 
         vm.prank(reader);
         chainVerse.payForArticle{value: 1 ether}(0);
@@ -149,9 +235,19 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
 
         vm.prank(author);
-        chainVerse.publishArticle(title, ipfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
 
         vm.prank(reader);
         chainVerse.payForArticle{value: 1 ether}(0);
@@ -171,9 +267,19 @@ contract ChainVerseTest is Test {
         string
             memory ipfsHash = "Qm12345678901234567890123456789012345678901234";
         uint256 price = 1 ether;
+        string
+            memory imageIpfsHash = "Qm12345678901234567890123456789012345678901233";
+
+        ChainVerse.Category category = ChainVerse.Category.Food;
 
         vm.prank(author);
-        chainVerse.publishArticle(title, ipfsHash, price);
+        chainVerse.publishArticle(
+            title,
+            ipfsHash,
+            imageIpfsHash,
+            category,
+            price
+        );
 
         vm.prank(reader);
         chainVerse.payForArticle{value: 1 ether}(0);
