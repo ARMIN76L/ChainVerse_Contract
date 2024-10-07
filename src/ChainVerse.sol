@@ -55,6 +55,9 @@ contract ChainVerse is ReentrancyGuard {
     // Track if a user has accessed the article content
     mapping(uint256 => mapping(address => bool)) public hasAccessedContent;
 
+    // Mapping to track the amount each user has paid for each article
+    mapping(uint256 => mapping(address => uint256)) public paidAmount;
+
     // Event for new article
     event NewArticle(
         uint256 indexed articleId,
@@ -146,6 +149,12 @@ contract ChainVerse is ReentrancyGuard {
         // Mark the user as having paid for the article
         hasPaid[articleId][msg.sender] = true;
 
+        // Update the payment timestamp
+        paymentTimestamps[articleId][msg.sender] = block.timestamp;
+
+        // Record the amount paid by the user
+        paidAmount[articleId][msg.sender] = msg.value;
+
         // Log successful payment
         emit PaymentProcessed(
             articleId,
@@ -214,7 +223,8 @@ contract ChainVerse is ReentrancyGuard {
             "You have already accessed the article content"
         );
 
-        uint256 amountPaid = articles[articleId].price;
+        // Use the actual amount the user paid for the refund
+        uint256 amountPaid = paidAmount[articleId][msg.sender];
 
         // Mark as not paid and reset payment timestamp before transferring funds
         hasPaid[articleId][msg.sender] = false;
