@@ -5,9 +5,30 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./PlatformManager.sol";
 
 contract ChainVerse is ReentrancyGuard {
+    // Define article categories as an enum
+    enum Category {
+        Technology,
+        Business,
+        Health,
+        Science,
+        Education,
+        Art_Culture,
+        Entertainment,
+        Sports,
+        Travel,
+        Lifestyle,
+        Food,
+        Politics,
+        Finance,
+        Environment,
+        History
+    }
+
     struct Article {
         string title;
         string ipfsHash;
+        string imageIpfsHash;
+        Category category;
         address author;
         uint256 timestamp;
         uint256 price; // Price in wei for reading
@@ -36,10 +57,11 @@ contract ChainVerse is ReentrancyGuard {
 
     // Event for new article
     event NewArticle(
-        uint256 articleId,
+        uint256 indexed articleId,
         address indexed author,
         string title,
-        uint256 price
+        uint256 price,
+        Category indexed category
     );
 
     // Event for article access
@@ -78,6 +100,8 @@ contract ChainVerse is ReentrancyGuard {
     function publishArticle(
         string memory _title,
         string memory _ipfsHash,
+        string memory _imageIpfsHash,
+        Category _category,
         uint256 _price
     ) public {
         require(bytes(_title).length <= 64, "Title exceeds max length");
@@ -90,13 +114,15 @@ contract ChainVerse is ReentrancyGuard {
         articles[articleId] = Article({
             title: _title,
             ipfsHash: _ipfsHash,
+            imageIpfsHash: _imageIpfsHash,
+            category: _category,
             author: msg.sender,
             timestamp: block.timestamp,
             price: _price
         });
 
         nextArticleId++; // Increment for the next article
-        emit NewArticle(articleId, msg.sender, _title, _price);
+        emit NewArticle(articleId, msg.sender, _title, _price, _category);
     }
 
     // Pay to access an article
@@ -216,6 +242,8 @@ contract ChainVerse is ReentrancyGuard {
         view
         returns (
             string memory title,
+            string memory imageIpfsHash,
+            Category category,
             address author,
             uint256 timestamp,
             uint256 price,
@@ -225,12 +253,14 @@ contract ChainVerse is ReentrancyGuard {
         require(articleId < nextArticleId, "Article does not exist");
         Article memory article = articles[articleId];
         if (article.price == 0) {
-            hasAccess = true; // Free articles are always accessible
+            hasAccess = true;
         } else {
             hasAccess = hasPaid[articleId][msg.sender];
         }
         return (
             article.title,
+            article.imageIpfsHash,
+            article.category,
             article.author,
             article.timestamp,
             article.price,
